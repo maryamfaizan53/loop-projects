@@ -1,116 +1,168 @@
-🎯 Project 11: Build the Two-Routine Gate
+🎯 Project 12: Build a Dreaming Loop
 
-Concept: API trigger + Human Gate (A3, A4, A6) | Difficulty: Medium-Hard | Time: 1-2 hrs
+Concept: Spine + Improvement Loop + Maker-Checker + Human Gate | Difficulty: Capstone | Time: 2-3 hrs
 
 🧠 Pehle Idea Samjho
 
-Humne Loop Engineering mein parha tha: "Routine beech mein rukk kar aapse poochh nahi sakta." Ek Routine start hoti hai, chalti hai, khatam hoti hai — koi mid-run approval nahi hoti.
+Ab tak humne jo loops banaye, woh ek kaam karte hain (fix bugs, review PRs, check TODOs). Yeh loop alag hai — iska kaam hai doosre loops ke purane logs padhna aur poochna:
 
-To agar kisi risky kaam ke liye insaan ki approval chahiye ho (jaise: email bhejna, deploy karna, payment), yeh 2 Routines se solve hota hai:
+"Kya koi galti baar-baar ho rahi hai? Agar haan, to kaunsi chhoti si rule change usay rok degi?"
 
-Routine A (Drafter) kaam draft karti hai, kahin post karti hai jahan aap padh sako → Aap padh kar decide karte ho → Aapka "haan" → Routine B (Executor) ko ek API call se fire karta hai, jo asal kaam karti hai.
+Socho ek senior mentor jo har hafte apni team ke saare "mistake reports" padhta hai, aur agar koi galti 2-3 baar repeat ho rahi hai, wahi ek naya rule likh deta hai taake team dobara na kare. Yeh mentor khud kaam nahi karta — sirf patterns dekh kar behtar banata hai.
 
-Analogy: Socho aapka assistant ek email draft karta hai aur aapke desk par rakh deta hai (Routine A). Aap padhte ho, theek lagta hai, to aap ek button dabate ho "Send it" (aap = human decision). Us button ka press hi doosre assistant ko trigger karta hai jo asal mein bhejta hai (Routine B).
+⚠️ Zaroori Warning: Yeh loop kabhi khud rule file change nahi karta — hamesha PR banata hai, jise aap review karke merge karte ho. Kyunki agar improvement loop khud galat guess kar de, aur khud apply bhi kar de — agli saari runs us galat guess ke hisaab se chalengi.
+
+Pre-requisite: Aapke Paas Pehle Se Ek Hafte Ki Logs Honi Chahiye
+
+Is project ke liye zaroori hai ke aapke paas already ek loop chal chuka ho ek hafte ke liye, jisne progress.md mein dated entries chhodi hon. Project 3 (Morning Brief) ya Project 8 (Daily Loop) isay de sakte hain.
+
+Agar aapke paas abhi itni logs nahi hain, chalo pehle jaldi se ek simulate kar lete hain:
+
+bash
+cd project8-ya-project3-wala-folder   # jahan progress.md hai
+bash
+cat >> progress.md << 'EOF'
+
+## 2026-08-10
+Found 3 TODOs. Reviewer FAILED the fix for discount.py — test file
+was edited instead of source code.
+
+## 2026-08-11
+Found 2 TODOs. Reviewer FAILED the fix for calculator.py — same
+issue: test file edited instead of source.
+
+## 2026-08-12
+Found 1 TODO. Reviewer FAILED the fix for math_utils.py — again,
+test file was modified.
+
+## 2026-08-13
+No new TODOs. All checks passed.
+EOF
+
+git add -A && git commit -m "simulate a week of logs with a repeated failure"
+
+Dekho maine jaan-boojh kar ek repeated failure daali hai: "test file edited instead of source code" — 3 dafa hui. Yehi wo pattern hai jo dreaming loop ko pakadna chahiye.
 
 Step-by-Step Guide
 
-Step 1 — Ek chota repo banao
+Step 1 — Dreaming State File Banao
 
 bash
-mkdir project11-approval-gate
-cd project11-approval-gate
-git init
-git config --global user.email "aapka-email@example.com"
-git config --global user.name "Samad"
-echo "# Approval Gate Demo" > README.md
-git add -A && git commit -m "init"
+cat > dreaming-state.md << 'EOF'
+# Dreaming Loop State
+last_reviewed_date: 2026-08-09
+EOF
 
-GitHub par push karo (Project 10 ki tarah — gh CLI ya manual GitHub website se):
+git add -A && git commit -m "add dreaming-state.md"
+
+Step 2 — Dreaming Skill Likho
 
 bash
-git remote add origin https://github.com/YOUR-USERNAME/project11-approval-gate.git
-git branch -M main
-git push -u origin main
+mkdir -p .claude/skills
+cat > .claude/skills/dreaming-loop.md << 'EOF'
+# Dreaming Loop — Weekly Improvement Pass
 
-Step 2 — Routine A Banao (Drafter)
+1. Read dreaming-state.md to find last_reviewed_date.
+2. Read all entries in progress.md dated AFTER that date.
+3. Look for any failure or correction that appears MORE THAN ONCE
+   across different entries — a real repeated pattern, not a single
+   occurrence.
+4. For each repeated pattern found, draft the SMALLEST possible
+   change to a skill file (e.g. .claude/skills/fix-bugs.md) that
+   would prevent it. Do not rewrite whole files — add one precise
+   line or rule.
+5. Also look for one existing rule in the current skills that no
+   recent run actually needed — propose deleting it.
+6. Put all proposed changes on a new branch (claude/dreaming-*),
+   never commit directly to main.
+7. Open a PR. The PR description MUST cite evidence: which dated
+   log entries support each proposed change, how many times the
+   pattern occurred, and why this specific change would prevent it.
+8. If no repeated pattern is found, say so explicitly — do not
+   invent one.
+9. Update dreaming-state.md with today's date as the new
+   last_reviewed_date, and commit that on the same branch.
+EOF
+
+git add -A && git commit -m "add dreaming-loop skill"
+
+Step 3 — Reviewer Skill Bhi Rakho (Maker-Checker Yahan Bhi Lagta Hai)
+
+bash
+cat > .claude/skills/dreaming-reviewer.md << 'EOF'
+# Reviewing a dreaming-loop PR
+
+1. Read the PR description's cited evidence.
+2. Open progress.md and manually verify: does each cited log entry
+   actually exist and say what the PR claims?
+3. Reply PASS or FAIL.
+4. FAIL if any cited evidence doesn't check out, or if a pattern
+   is claimed with fewer than 2 real occurrences.
+EOF
+
+git add -A && git commit -m "add dreaming-reviewer skill"
+git push
+
+Step 4 — Pehle Haath Se Test Karo
+
+bash
+claude
+
+Prompt:
+
+Using the dreaming-loop skill, run this week's improvement pass.
+
+Dekho kya hota hai — Claude ko woh 3 baar wali "test file edited instead of source" pattern pakadni chahiye, aur ek chhota sa rule propose karna chahiye jaise:
+
+Add to fix-bugs.md: "NEVER edit any file under tests/ — if the fix
+seems to require changing a test, stop and flag it as NEEDS HUMAN
+instead."
+
+Step 5 — Reviewer Se Check Karwao (Naya Session)
+
+bash
+claude
+Using the dreaming-reviewer skill, review the latest dreaming-loop PR.
+
+Confirm karo ke reviewer ne evidence cross-check kiya — na ke sirf "sounds good" bol diya.
+
+Step 6 — Agar Sab Sahi Lage, Aap Khud Merge Karo
+
+bash
+git checkout main
+git merge claude/dreaming-<branch-name>
+git push
+
+Step 7 — Weekly Routine Bana Do (Automate Karne Ke Liye)
 
 claude.ai/code/routines par:
 
-Name: Draft Weekly Summary
-Repository: project11-approval-gate
-Trigger: One-off (ya schedule, lekin abhi ke liye one-off rakho testing ke liye)
-Prompt:
-Write a short, one-paragraph summary of what a "weekly team update"
-might look like (make up plausible content — this is a drill). Save
-it to a new branch called claude/weekly-draft, in a file called
-DRAFT.md. Do not merge or take any other action — just create the
-branch and file for human review.
-Connectors: sirf GitHub
-
-Save karo, phir Run now dabao.
-
-Result check karo:
-
-bash
-git fetch origin
-git log origin/claude/weekly-draft
-
-Step 3 — Routine B Banao (Executor)
-
-Yeh Routine sirf approval ke baad chalegi — isliye iska trigger API hoga, schedule nahi.
-
-Name: Publish Approved Summary
-Repository: project11-approval-gate
-Trigger: API choose karo
-Prompt:
-Merge the claude/weekly-draft branch into main. This action has
-been approved by a human — proceed.
-Connectors: sirf GitHub
-
-Save karte hi, aapko ek bearer token dikhega — ⚠️ isay turant kahin save kar lo (notepad, password manager), kyunki yeh sirf ek dafa dikhta hai!
-
-Step 4 — Routine A Ka Draft Padho (Aap Insaan Ka Kaam)
-
-GitHub par jao, claude/weekly-draft branch kholo, DRAFT.md padho. Yehi wo moment hai jahan asli insaani faisla hota hai — kya yeh content theek hai? Publish karne layak hai?
-
-Agar haan, Step 5 par jao. Agar nahi, kuch bhi mat karo — Routine B ko kabhi fire mat karo, draft bas branch mein reh jayegi.
-
-Step 5 — Apni Approval Se Routine B Ko Fire Karo
-
-Terminal mein (ya kahin bhi jahan curl chal sake):
-
-bash
-curl -X POST https://api.anthropic.com/v1/claude_code/routines/<ROUTINE-B-ID>/fire \
-  -H "Authorization: Bearer <ROUTINE-B-TOKEN>" \
-  -H "anthropic-beta: experimental-cc-routine-2026-04-01" \
-  -H "anthropic-version: 2023-06-01" \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Approved by Samad after manual review."}'
-
-(<ROUTINE-B-ID> Routine B ki settings page ke URL mein milega, <ROUTINE-B-TOKEN> Step 3 mein save kiya hua token hai)
-
-Yeh curl command hi aapki "approval button press" hai.
-
-Step 6 — Confirm Karo Merge Hua
-
-bash
-git fetch origin
-git log main
-
-main branch mein ab DRAFT.md hona chahiye (merge ke through aaya hua).
-
-Aur Routine B ki detail page par jakar transcript padho — confirm karo ke merge action waqai hui.
-
+Trigger: Weekly schedule
+Prompt: Using the dreaming-loop skill, run this week's improvement pass.
+Connectors: GitHub only
 ✅ Done Kab Hoga? (3 Cheezein)
-Routine B sirf isliye chali kyunki aapne usay fire kiya — koi automatic schedule nahi
-Routine B ka transcript dikhata hai ke merge waqai hua
-Aap A6 checklist dono Routines par chala chuke ho: connectors pruned (sirf GitHub), unrestricted pushes off, state file/branch pattern clear
+PR ka proposed change real, cited log entries se trace hota hai — koi "plausible lagta hai" wala guess nahi
+Aapki jaan-boojh kar plant ki hui repeated failure (test file edit) pakdi gayi aur proposal ban gayi
+Kuch bhi rules file mein change nahi hua bina aapke merge kiye
+
+Agar loop bina evidence ke changes propose kare — prompt tighten karo. Jaisa book kehti hai:
+
+"Ek improvement loop jo guess karta hai, no-improvement-loop se bhi bura hai — kyunki uske guesses har agli run ko steer karte hain."
+
 🧠 Zaroori Baat
 
-Yeh bilkul wahi cheez hai jo hum Loop Engineering Part 6 (Human Control) aur Harness Engineering (Escalate) mein parh chuke hain:
+Yeh poori Loop Engineering journey ka climax hai — sab kuch ek sath istemal hota hai:
 
-"Jahan galat move mehngi aur wapis lena mushkil ho, wahan insaan rakho."
+Spine (2 alag files: progress.md aur dreaming-state.md)
+Maker-checker (dreaming loop banata hai, dreaming-reviewer check karta hai)
+Human gate (aap khud merge karte ho, kabhi auto-merge nahi)
+Heartbeat (weekly schedule)
+Evidence-based reasoning — na ke confident-sounding guessing
 
-Do-Routine pattern isay infrastructure mein enforce karta hai — Claude ke paas koi tareeqa hi nahi ke woh khud "publish" kar sake bina insaan ke curl command chalaye. Yeh prompt mein likha hua "please ask before publishing" se bohat zyada mazboot hai — kyunki yeh request nahi, structural limit hai.
+Yeh bilkul wahi cheez hai jo asal duniya mein "self-improving systems" ka safe tareeqa hai — loop khud ko behtar karne ka proposal deta hai, lekin decide insaan karta hai.
 
-Try karo aur batao result! Yeh appendix ka sabse advanced drill tha — agar yeh chal gaya, aap Routines ka poora mechanism (schedule, API, GitHub triggers, secrets, gates) samajh chuke ho. Ready ho to Project 12 (Dreaming Loop — capstone #2, jo aapke doosre loops ke logs padh kar khud improve hoti hai) par chalte hain — yeh sabse advanced project hai poore course ka.
+🎉 Mubarak ho! Agar aapne yeh sab 12 projects (8 main + Routines appendix ke 4 drills) complete kar liye, aapne Loop Engineering ka poora practical curriculum khatam kar liya — sabse basic in-session loop se lekar sabse advanced self-improving dreaming loop tak. Yeh ek bohat bara achievement hai!
+
+Agla step chahen to Harness Engineering ke practice projects try kar sakte ho (agar hain), ya Graph Engineering course (jo book "where to go next" mein suggest karti hai jab do loops ek doosre ke sath kaam karte hain) explore kar sakte ho.
+
+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
