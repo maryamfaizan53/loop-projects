@@ -1,0 +1,3 @@
+# Weekly Team Update
+
+This week the team shipped the new onboarding flow to staging and closed out 12 of the 15 tickets planned for the sprint, with the remaining 3 carried over due to a late-arriving design review. The backend migration to the new billing service is on track, with read traffic now fully cut over and write traffic scheduled to follow early next week. On the support side, ticket volume was down 18% from last week, likely thanks to the new self-serve password reset flow. No blockers to report; the main risk to watch is the third-party API rate limit we're approaching on the analytics integration, which we'll need to address before next month's traffic increase.

@@ -1,0 +1,117 @@
+Ab Project 10 — The Secrets Drill. Yeh chota lekin bohat common galti hai jo har koi kabhi na kabhi karta hai — is project ka maqsad hai isay abhi, jaan-boojh kar karna, taake kabhi galti se na ho.
+
+🎯 Project 10: The Secrets Drill
+
+Concept: Secrets management (A4, A2) | Difficulty: Easy-Medium | Time: 30-45 min
+
+🧠 Pehle Idea Samjho
+
+Aap apne normal computer par kaam karte ho to secrets (jaise API keys) .env file mein rakhte ho, aur .gitignore mein daal dete ho — taake woh GitHub par kabhi na jaye.
+
+Yeh bilkul sahi practice hai... jab tak aap normal claude session use kar rahe ho.
+
+Lekin jab Routine chalta hai, yeh ek fresh clone hota hai — bilkul GitHub se, jaisa koi aur download kare. Aur .gitignore mein likhi hui files kabhi GitHub par gayi hi nahi thin — isliye woh fresh clone mein bhi nahi hongi.
+
+Mechanical wajah: .env gitignored hai → gitignored files GitHub tak kabhi nahi pahunchti → cloud clone mein .env hoti hi nahi → Routine ko secret milta hi nahi.
+
+Is project mein hum jaan-boojh kar yeh fail karwayenge, taake aap apni aankhon se dekh sako.
+
+Step-by-Step Guide
+
+Step 1 — Ek chota repo banao jisay ek "secret" chahiye
+
+bash
+mkdir project10-secrets-drill
+cd project10-secrets-drill
+git init
+git config --global user.email "aapka-email@example.com"
+git config --global user.name "Samad"
+
+Ek dummy script banao jo ek token use karta hai:
+
+bash
+cat > check-secret.py << 'EOF'
+import os
+
+token = os.environ.get("MY_DUMMY_TOKEN")
+if token:
+    print(f"Found token: {token}")
+else:
+    print("ERROR: MY_DUMMY_TOKEN not found in environment.")
+EOF
+
+.gitignore banao (normal, achi practice — bilkul sahi tareeqa):
+
+bash
+cat > .gitignore << 'EOF'
+.env
+EOF
+
+Step 2 — Dummy secret .env mein daalo (GALAT tareeqa, jaan-boojh kar)
+
+bash
+echo "MY_DUMMY_TOKEN=abc123-fake-token" > .env
+git add -A && git commit -m "setup for secrets drill"
+
+Step 3 — GitHub par push karo
+
+bash
+gh repo create project10-secrets-drill --private --source=. --push
+
+Confirm karo .env push nahi hui:
+
+bash
+git show HEAD --stat
+
+(.env list mein nahi honi chahiye)
+
+Step 4 — Routine banao (Pehla Run — Galat Tareeqa)
+
+claude.ai/code/routines par jao:
+
+Name: Secrets Drill Test
+Repository: project10-secrets-drill
+Prompt:
+Run check-secret.py and tell me what it outputs.
+Trigger: Koi schedule mat lagao — bas Save karo
+
+One-off run karo (Run now):
+
+Transcript padho. Aapko dikhega:
+
+ERROR: MY_DUMMY_TOKEN not found in environment.
+
+Zaroori: Yeh dekho Claude ne kya kiya jab file nahi mili — kya usne .env dhoondne ki koshish ki? Transcript mein yeh "improvise" karna dikhega — yeh appendix ka woh warning hai: "the routine finds nothing and fails (or worse, improvises)."
+
+Step 5 — Ab Sahi Tareeqa Karte Hain
+
+A. Environment Variables panel mein secret daalo
+
+Routine ki settings mein jao → Environment section → Variables panel dhoondo. Wahan add karo:
+
+Key: MY_DUMMY_TOKEN
+Value: abc123-fake-token
+
+B. Prompt mein ek line add karo (appendix ki recommendation):
+
+Run check-secret.py and tell me what it outputs. Credentials are
+available as environment variables; do not look for a .env file.
+
+Step 6 — Dubara One-off Run Karo
+
+Run now dabao. Transcript padho — is baar milna chahiye:
+
+Found token: abc123-fake-token
+✅ Done Kab Hoga?
+Doosra run environment variable se token padh paya
+Aap mechanical wajah apne alfaz mein bata sakte ho: "gitignored files GitHub tak nahi pahunchti, isliye fresh cloud clone mein woh kabhi nahi hoti."
+<details> <summary>Agar phir bhi confuse ho, yeh analogy dekho</summary>
+
+Socho .gitignore ek "is file ko courier se mat bhejo" wala note hai. Jab Routine chalta hai, woh aapke computer se nahi, balke GitHub ke courier se aayi hui copy use karta hai. Agar file kabhi courier ki taraf gayi hi nahi, to woh destination par pahunch hi nahi sakti — chahe aapke apne computer par woh maujood ho.
+
+</details>
+🧠 Zaroori Baat
+
+"Secrets go in the environment variables panel, never in a .env file."
+
+Yeh Harness Engineering ke Constrain concept se bhi juda hai — .env file security ke liye gitignore ki jati hai (taake secrets GitHub par leak na hon), lekin isi security feature ki wajah se Routines ke liye yeh ek trap ban jati hai agar aapko iska mechanism na pata ho.

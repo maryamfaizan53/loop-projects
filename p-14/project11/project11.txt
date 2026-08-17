@@ -1,0 +1,116 @@
+🎯 Project 11: Build the Two-Routine Gate
+
+Concept: API trigger + Human Gate (A3, A4, A6) | Difficulty: Medium-Hard | Time: 1-2 hrs
+
+🧠 Pehle Idea Samjho
+
+Humne Loop Engineering mein parha tha: "Routine beech mein rukk kar aapse poochh nahi sakta." Ek Routine start hoti hai, chalti hai, khatam hoti hai — koi mid-run approval nahi hoti.
+
+To agar kisi risky kaam ke liye insaan ki approval chahiye ho (jaise: email bhejna, deploy karna, payment), yeh 2 Routines se solve hota hai:
+
+Routine A (Drafter) kaam draft karti hai, kahin post karti hai jahan aap padh sako → Aap padh kar decide karte ho → Aapka "haan" → Routine B (Executor) ko ek API call se fire karta hai, jo asal kaam karti hai.
+
+Analogy: Socho aapka assistant ek email draft karta hai aur aapke desk par rakh deta hai (Routine A). Aap padhte ho, theek lagta hai, to aap ek button dabate ho "Send it" (aap = human decision). Us button ka press hi doosre assistant ko trigger karta hai jo asal mein bhejta hai (Routine B).
+
+Step-by-Step Guide
+
+Step 1 — Ek chota repo banao
+
+bash
+mkdir project11-approval-gate
+cd project11-approval-gate
+git init
+git config --global user.email "aapka-email@example.com"
+git config --global user.name "Samad"
+echo "# Approval Gate Demo" > README.md
+git add -A && git commit -m "init"
+
+GitHub par push karo (Project 10 ki tarah — gh CLI ya manual GitHub website se):
+
+bash
+git remote add origin https://github.com/YOUR-USERNAME/project11-approval-gate.git
+git branch -M main
+git push -u origin main
+
+Step 2 — Routine A Banao (Drafter)
+
+claude.ai/code/routines par:
+
+Name: Draft Weekly Summary
+Repository: project11-approval-gate
+Trigger: One-off (ya schedule, lekin abhi ke liye one-off rakho testing ke liye)
+Prompt:
+Write a short, one-paragraph summary of what a "weekly team update"
+might look like (make up plausible content — this is a drill). Save
+it to a new branch called claude/weekly-draft, in a file called
+DRAFT.md. Do not merge or take any other action — just create the
+branch and file for human review.
+Connectors: sirf GitHub
+
+Save karo, phir Run now dabao.
+
+Result check karo:
+
+bash
+git fetch origin
+git log origin/claude/weekly-draft
+
+Step 3 — Routine B Banao (Executor)
+
+Yeh Routine sirf approval ke baad chalegi — isliye iska trigger API hoga, schedule nahi.
+
+Name: Publish Approved Summary
+Repository: project11-approval-gate
+Trigger: API choose karo
+Prompt:
+Merge the claude/weekly-draft branch into main. This action has
+been approved by a human — proceed.
+Connectors: sirf GitHub
+
+Save karte hi, aapko ek bearer token dikhega — ⚠️ isay turant kahin save kar lo (notepad, password manager), kyunki yeh sirf ek dafa dikhta hai!
+
+Step 4 — Routine A Ka Draft Padho (Aap Insaan Ka Kaam)
+
+GitHub par jao, claude/weekly-draft branch kholo, DRAFT.md padho. Yehi wo moment hai jahan asli insaani faisla hota hai — kya yeh content theek hai? Publish karne layak hai?
+
+Agar haan, Step 5 par jao. Agar nahi, kuch bhi mat karo — Routine B ko kabhi fire mat karo, draft bas branch mein reh jayegi.
+
+Step 5 — Apni Approval Se Routine B Ko Fire Karo
+
+Terminal mein (ya kahin bhi jahan curl chal sake):
+
+bash
+curl -X POST https://api.anthropic.com/v1/claude_code/routines/<ROUTINE-B-ID>/fire \
+  -H "Authorization: Bearer <ROUTINE-B-TOKEN>" \
+  -H "anthropic-beta: experimental-cc-routine-2026-04-01" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Approved by Samad after manual review."}'
+
+(<ROUTINE-B-ID> Routine B ki settings page ke URL mein milega, <ROUTINE-B-TOKEN> Step 3 mein save kiya hua token hai)
+
+Yeh curl command hi aapki "approval button press" hai.
+
+Step 6 — Confirm Karo Merge Hua
+
+bash
+git fetch origin
+git log main
+
+main branch mein ab DRAFT.md hona chahiye (merge ke through aaya hua).
+
+Aur Routine B ki detail page par jakar transcript padho — confirm karo ke merge action waqai hui.
+
+✅ Done Kab Hoga? (3 Cheezein)
+Routine B sirf isliye chali kyunki aapne usay fire kiya — koi automatic schedule nahi
+Routine B ka transcript dikhata hai ke merge waqai hua
+Aap A6 checklist dono Routines par chala chuke ho: connectors pruned (sirf GitHub), unrestricted pushes off, state file/branch pattern clear
+🧠 Zaroori Baat
+
+Yeh bilkul wahi cheez hai jo hum Loop Engineering Part 6 (Human Control) aur Harness Engineering (Escalate) mein parh chuke hain:
+
+"Jahan galat move mehngi aur wapis lena mushkil ho, wahan insaan rakho."
+
+Do-Routine pattern isay infrastructure mein enforce karta hai — Claude ke paas koi tareeqa hi nahi ke woh khud "publish" kar sake bina insaan ke curl command chalaye. Yeh prompt mein likha hua "please ask before publishing" se bohat zyada mazboot hai — kyunki yeh request nahi, structural limit hai.
+
+Try karo aur batao result! Yeh appendix ka sabse advanced drill tha — agar yeh chal gaya, aap Routines ka poora mechanism (schedule, API, GitHub triggers, secrets, gates) samajh chuke ho. Ready ho to Project 12 (Dreaming Loop — capstone #2, jo aapke doosre loops ke logs padh kar khud improve hoti hai) par chalte hain — yeh sabse advanced project hai poore course ka.

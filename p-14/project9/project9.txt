@@ -1,0 +1,97 @@
+🎯 Project 9: Rehearse a Routine for Free
+
+Concept: One-off schedules + Reading transcripts (A1, A3, A5) | Difficulty: Easy | Time: 20-30 min
+
+🧠 Pehle Idea Samjho
+
+Jab aap Routine banate ho, aap usay seedha repeating schedule (roz/hafte) par daal sakte ho. Lekin agar prompt mein koi masla ho, aap din bharat schedule ko galat run karwaate rahoge, bina fix kiye.
+
+Behtar tareeqa: Pehle usay "one-off" run se test karo — matlab sirf ek dafa chalta hai, phir khud band ho jata hai. Aur zaroori baat: one-off runs aapke daily cap mein count nahi hote — matlab free mein practice kar sakte ho, jitni baar chahein!
+
+Is project ka doosra sabaq: "green status" sirf itna batata hai ke session crash nahi hua — yeh nahi batata ke aapka asal kaam successful hua. Yeh farq khud dekhna hai.
+
+Step-by-Step Guide
+
+Step 1 — Ek throwaway repo mein ek chota, checkable task banao
+
+bash
+mkdir project9-routine-test
+cd project9-routine-test
+git init
+git config --global user.email "aapka-email@example.com"
+git config --global user.name "Samad"
+echo "# Test repo for routine rehearsal" > README.md
+git add -A && git commit -m "init"
+
+Step 2 — GitHub par push karo (Routine ko repo chahiye)
+
+bash
+gh repo create project9-routine-test --private --source=. --push
+
+Step 3 — Routine banao (lekin schedule pe MAT daalo abhi)
+
+claude.ai/code/routines par jao → New routine → Remote:
+
+Name: Yesterday's Commits Summary
+Repository: project9-routine-test
+Prompt:
+Summarize any commits from the last 24 hours in this repo. Write
+the summary to a new branch called claude/summary, in a file
+called SUMMARY.md.
+Trigger: Yahan schedule set mat karo — bas save kar do, ya CLI se one-off use karo (Step 4 dekho)
+
+Step 4 — Ek "one-off" run se fire karo
+
+Do tareeqe hain:
+
+Tareeqa A — Web se "Run now" button:
+Routine ki detail page par Run now button dabao.
+
+Tareeqa B — CLI se plain language mein:
+
+bash
+claude
+/schedule tomorrow at 9am, summarize yesterday's commits in project9-routine-test
+
+Step 5 — Poora transcript padho (sirf status color mat dekho!)
+
+Run complete hone ke baad, uski detail page kholo. Sirf green dot mat dekho — poora transcript padho: kya usne waqai claude/summary branch banayi? SUMMARY.md file mein kya likha?
+
+bash
+git fetch origin
+git log origin/claude/summary
+
+Step 6 — Ab jaan-boojh kar isay FAIL karwao
+
+Prompt ko edit karo, ek galat file ka naam do:
+
+Read the file called this-file-does-not-exist.md, then summarize
+yesterday's commits and write to claude/summary/SUMMARY.md.
+
+Dubara one-off run karo (Run now ya /schedule se).
+
+Step 7 — Dono runs compare karo
+
+Dono runs ki detail page kholo. Dono par green status dikhega (kyunki session crash nahi hua, sirf task fail hua). Lekin:
+
+Pehla run: transcript mein waqai branch/file bani
+Doosra run: transcript mein Claude ne file dhoondi, nahi mili, aur kuch improvise kiya ya keh diya "couldn't find the file"
+✅ Done Kab Hoga?
+
+Aapne 2 green runs dekhe:
+
+Ek jiska transcript success dikhata hai
+Ek jiska transcript failure dikhata hai
+
+Aur aap ek sentence mein bata sakte ho: status color dono ko alag kyun nahi kar saka?
+
+<details> <summary>Jawab (khud try karo pehle)</summary>
+
+Green status sirf yeh batata hai ke Anthropic ka server session complete kar paya, bina infrastructure error ke (jaise crash, timeout). Yeh kabhi nahi check karta ke aapka asal task successful hua — woh sirf transcript padh kar pata chalta hai.
+
+</details>
+🧠 Zaroori Baat
+
+"Green means the platform completed the session. It does not prove that the requested work succeeded."
+
+Yeh appendix ka A5 wala core lesson hai, aur yeh Loop Engineering Part 6 ke "Guess vs Fail" concept se seedha juda hai — ek chup chaap fail hua run, ek waisi hi dikhne wali success ki tarah dikh sakta hai, jab tak aap transcript khud na padho.

@@ -1,0 +1,168 @@
+🎯 Project 12: Build a Dreaming Loop
+
+Concept: Spine + Improvement Loop + Maker-Checker + Human Gate | Difficulty: Capstone | Time: 2-3 hrs
+
+🧠 Pehle Idea Samjho
+
+Ab tak humne jo loops banaye, woh ek kaam karte hain (fix bugs, review PRs, check TODOs). Yeh loop alag hai — iska kaam hai doosre loops ke purane logs padhna aur poochna:
+
+"Kya koi galti baar-baar ho rahi hai? Agar haan, to kaunsi chhoti si rule change usay rok degi?"
+
+Socho ek senior mentor jo har hafte apni team ke saare "mistake reports" padhta hai, aur agar koi galti 2-3 baar repeat ho rahi hai, wahi ek naya rule likh deta hai taake team dobara na kare. Yeh mentor khud kaam nahi karta — sirf patterns dekh kar behtar banata hai.
+
+⚠️ Zaroori Warning: Yeh loop kabhi khud rule file change nahi karta — hamesha PR banata hai, jise aap review karke merge karte ho. Kyunki agar improvement loop khud galat guess kar de, aur khud apply bhi kar de — agli saari runs us galat guess ke hisaab se chalengi.
+
+Pre-requisite: Aapke Paas Pehle Se Ek Hafte Ki Logs Honi Chahiye
+
+Is project ke liye zaroori hai ke aapke paas already ek loop chal chuka ho ek hafte ke liye, jisne progress.md mein dated entries chhodi hon. Project 3 (Morning Brief) ya Project 8 (Daily Loop) isay de sakte hain.
+
+Agar aapke paas abhi itni logs nahi hain, chalo pehle jaldi se ek simulate kar lete hain:
+
+bash
+cd project8-ya-project3-wala-folder   # jahan progress.md hai
+bash
+cat >> progress.md << 'EOF'
+
+## 2026-08-10
+Found 3 TODOs. Reviewer FAILED the fix for discount.py — test file
+was edited instead of source code.
+
+## 2026-08-11
+Found 2 TODOs. Reviewer FAILED the fix for calculator.py — same
+issue: test file edited instead of source.
+
+## 2026-08-12
+Found 1 TODO. Reviewer FAILED the fix for math_utils.py — again,
+test file was modified.
+
+## 2026-08-13
+No new TODOs. All checks passed.
+EOF
+
+git add -A && git commit -m "simulate a week of logs with a repeated failure"
+
+Dekho maine jaan-boojh kar ek repeated failure daali hai: "test file edited instead of source code" — 3 dafa hui. Yehi wo pattern hai jo dreaming loop ko pakadna chahiye.
+
+Step-by-Step Guide
+
+Step 1 — Dreaming State File Banao
+
+bash
+cat > dreaming-state.md << 'EOF'
+# Dreaming Loop State
+last_reviewed_date: 2026-08-09
+EOF
+
+git add -A && git commit -m "add dreaming-state.md"
+
+Step 2 — Dreaming Skill Likho
+
+bash
+mkdir -p .claude/skills
+cat > .claude/skills/dreaming-loop.md << 'EOF'
+# Dreaming Loop — Weekly Improvement Pass
+
+1. Read dreaming-state.md to find last_reviewed_date.
+2. Read all entries in progress.md dated AFTER that date.
+3. Look for any failure or correction that appears MORE THAN ONCE
+   across different entries — a real repeated pattern, not a single
+   occurrence.
+4. For each repeated pattern found, draft the SMALLEST possible
+   change to a skill file (e.g. .claude/skills/fix-bugs.md) that
+   would prevent it. Do not rewrite whole files — add one precise
+   line or rule.
+5. Also look for one existing rule in the current skills that no
+   recent run actually needed — propose deleting it.
+6. Put all proposed changes on a new branch (claude/dreaming-*),
+   never commit directly to main.
+7. Open a PR. The PR description MUST cite evidence: which dated
+   log entries support each proposed change, how many times the
+   pattern occurred, and why this specific change would prevent it.
+8. If no repeated pattern is found, say so explicitly — do not
+   invent one.
+9. Update dreaming-state.md with today's date as the new
+   last_reviewed_date, and commit that on the same branch.
+EOF
+
+git add -A && git commit -m "add dreaming-loop skill"
+
+Step 3 — Reviewer Skill Bhi Rakho (Maker-Checker Yahan Bhi Lagta Hai)
+
+bash
+cat > .claude/skills/dreaming-reviewer.md << 'EOF'
+# Reviewing a dreaming-loop PR
+
+1. Read the PR description's cited evidence.
+2. Open progress.md and manually verify: does each cited log entry
+   actually exist and say what the PR claims?
+3. Reply PASS or FAIL.
+4. FAIL if any cited evidence doesn't check out, or if a pattern
+   is claimed with fewer than 2 real occurrences.
+EOF
+
+git add -A && git commit -m "add dreaming-reviewer skill"
+git push
+
+Step 4 — Pehle Haath Se Test Karo
+
+bash
+claude
+
+Prompt:
+
+Using the dreaming-loop skill, run this week's improvement pass.
+
+Dekho kya hota hai — Claude ko woh 3 baar wali "test file edited instead of source" pattern pakadni chahiye, aur ek chhota sa rule propose karna chahiye jaise:
+
+Add to fix-bugs.md: "NEVER edit any file under tests/ — if the fix
+seems to require changing a test, stop and flag it as NEEDS HUMAN
+instead."
+
+Step 5 — Reviewer Se Check Karwao (Naya Session)
+
+bash
+claude
+Using the dreaming-reviewer skill, review the latest dreaming-loop PR.
+
+Confirm karo ke reviewer ne evidence cross-check kiya — na ke sirf "sounds good" bol diya.
+
+Step 6 — Agar Sab Sahi Lage, Aap Khud Merge Karo
+
+bash
+git checkout main
+git merge claude/dreaming-<branch-name>
+git push
+
+Step 7 — Weekly Routine Bana Do (Automate Karne Ke Liye)
+
+claude.ai/code/routines par:
+
+Trigger: Weekly schedule
+Prompt: Using the dreaming-loop skill, run this week's improvement pass.
+Connectors: GitHub only
+✅ Done Kab Hoga? (3 Cheezein)
+PR ka proposed change real, cited log entries se trace hota hai — koi "plausible lagta hai" wala guess nahi
+Aapki jaan-boojh kar plant ki hui repeated failure (test file edit) pakdi gayi aur proposal ban gayi
+Kuch bhi rules file mein change nahi hua bina aapke merge kiye
+
+Agar loop bina evidence ke changes propose kare — prompt tighten karo. Jaisa book kehti hai:
+
+"Ek improvement loop jo guess karta hai, no-improvement-loop se bhi bura hai — kyunki uske guesses har agli run ko steer karte hain."
+
+🧠 Zaroori Baat
+
+Yeh poori Loop Engineering journey ka climax hai — sab kuch ek sath istemal hota hai:
+
+Spine (2 alag files: progress.md aur dreaming-state.md)
+Maker-checker (dreaming loop banata hai, dreaming-reviewer check karta hai)
+Human gate (aap khud merge karte ho, kabhi auto-merge nahi)
+Heartbeat (weekly schedule)
+Evidence-based reasoning — na ke confident-sounding guessing
+
+Yeh bilkul wahi cheez hai jo asal duniya mein "self-improving systems" ka safe tareeqa hai — loop khud ko behtar karne ka proposal deta hai, lekin decide insaan karta hai.
+
+🎉 Mubarak ho! Agar aapne yeh sab 12 projects (8 main + Routines appendix ke 4 drills) complete kar liye, aapne Loop Engineering ka poora practical curriculum khatam kar liya — sabse basic in-session loop se lekar sabse advanced self-improving dreaming loop tak. Yeh ek bohat bara achievement hai!
+
+Agla step chahen to Harness Engineering ke practice projects try kar sakte ho (agar hain), ya Graph Engineering course (jo book "where to go next" mein suggest karti hai jab do loops ek doosre ke sath kaam karte hain) explore kar sakte ho.
+
+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
