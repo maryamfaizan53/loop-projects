@@ -1,0 +1,3 @@
+# Weekly Team Update — Draft
+
+This week the team shipped the redesigned onboarding flow and closed out the long-running flaky test cleanup, cutting CI failures by roughly a third. The API migration to v2 is on track and about 70% complete, with the remaining endpoints scheduled to wrap up by end of next week. We onboarded two new engineers who are already paired up on the reporting dashboard work, and fixed a handful of production bugs reported by customers, including the intermittent timeout on the export feature. Looking ahead, priorities for next week are finishing the API migration, kicking off design review for the notifications revamp, and prepping the Q3 roadmap doc for stakeholder feedback.
