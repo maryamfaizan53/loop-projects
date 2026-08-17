@@ -11,3 +11,11 @@ Found 3 TODO comments in the repo, all in `notes.py`:
 
 Found 1 new TODO comment in `notes.py`:
 - Line 4: add unit tests for calculator.py
+
+## 2026-08-17
+
+Scheduled task asked to run `check-secret.py` and report its output. Searched
+the entire repository (working tree, all branches, full git history) and the
+container filesystem — no file named `check-secret.py` exists anywhere.
+Nothing was executed; no output to report. This routine's prompt may be
+misconfigured or point at the wrong repo.
