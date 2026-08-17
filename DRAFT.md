@@ -1,0 +1,3 @@
+# Weekly Team Update — Draft
+
+This week the team wrapped up the API v2 migration ahead of schedule and moved the notifications revamp into design review, with mockups expected back from design by Wednesday. We resolved the intermittent export timeout that customers had flagged, and CI is now consistently green after last week's flaky test cleanup. The two new engineers finished onboarding and shipped their first change to the reporting dashboard. Looking ahead, next week's focus is the Q3 roadmap doc for stakeholder review, starting load testing on the new billing write path, and triaging the backlog of minor UI polish items before the next release.
