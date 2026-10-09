@@ -1,3 +1,3 @@
-# Weekly Team Update — Draft
+# Weekly Team Update (Drill Draft)
 
-This week the team shipped the new onboarding flow to 10% of users, closed 14 of 18 planned tickets, and cut average CI time from 12 to 8 minutes by parallelizing the test suite. The payments migration is on track for next Friday, though a vendor API rate-limit issue is being tracked as a risk. Next week we plan to expand the onboarding rollout to 50%, begin the dashboard redesign, and run a short retro on the on-call handoff process. Shoutout to the infra crew for a smooth database upgrade with zero downtime. (Drill content — all details are made up.)
+This week the team shipped the v2.3 release candidate, closed 14 of 18 planned tickets, and cut average API latency by roughly 12% after the caching changes landed. Onboarding for the two new engineers went smoothly, and design delivered final mockups for the settings redesign. Two items slipped: the analytics export is blocked on a vendor dependency, and test flakiness in CI cost about a day of velocity. Next week we will focus on the release sign-off, unblocking the export work, and stabilizing CI. (All content is invented for a drill.)
