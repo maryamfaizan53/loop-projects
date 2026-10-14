@@ -1,3 +1,5 @@
-# Weekly Team Update (Draft)
+# Weekly Team Update (Draft — Drill)
 
-This week the team shipped the new onboarding flow to 20% of users, closed 14 of 17 planned tickets, and cut p95 API latency by roughly 18% after the caching changes landed. The mobile release slipped two days due to a flaky test suite, which has since been stabilized. Next week we plan to expand the onboarding rollout to 50%, begin the billing-page redesign, and hold a retrospective on the release delays. Blockers: we are waiting on design sign-off for the billing mockups. (Note: this is a drill; all content is made up.)
+This week the team shipped the v2.3 release candidate, closed 14 of 18 planned tickets, and cut p95 API latency by roughly 20% after the caching changes landed. Onboarding for the two new teammates wrapped up, and the design review for the notifications revamp was approved with minor revisions. Two items slipped: the analytics export (waiting on a data-access approval) and the flaky integration test cleanup. Next week's priorities are finalizing the release, unblocking the analytics export, and kicking off planning for next quarter. No major risks to flag; the only dependency to watch is the pending access approval.
+
+*Note: all content above is fabricated for a drill.*
